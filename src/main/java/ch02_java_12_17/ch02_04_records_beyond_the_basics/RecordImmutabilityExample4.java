@@ -1,0 +1,32 @@
+package ch02_java_12_17.ch02_04_records_beyond_the_basics;
+
+import java.time.LocalDate;
+
+/**
+ * Beispielprogramm für die Workshops "Best of Java 11/17 bis 20/21/22/23/24/25" / die Bücher "Java – die Neuerungen in Java 17 LTS, 18 und 19" und "Java 25 LTS"
+ * Sample program for the workshops "Best of Java 11/17 to 20/21/22/23/24/25" / the books “Java – the new features in Java 17 LTS, 18, and 19” and “Java 25 LTS and Beyond”
+ *
+ * @author Michael Inden
+ * <p>
+ * Copyright 2021/2022/2023/2024/25/26 by Michael Inden
+ */
+public class RecordImmutabilityExample4
+{
+    public static void main(final String[] args)
+    {
+		record DateRange(LocalDate start, LocalDate end) 
+		{
+			DateRange
+			{
+				if (!start.isBefore(end))
+					throw new IllegalArgumentException("start >= end");
+			}
+		}
+				
+		DateRange range1 = new DateRange(LocalDate.of(1971,1,7), LocalDate.of(1971,2,27));
+		System.out.println(range1);
+		
+		DateRange range2 = new DateRange(LocalDate.of(1971,6,7), LocalDate.of(1971,2,27));
+		System.out.println(range2);
+    }
+}

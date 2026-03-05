@@ -1,0 +1,1711 @@
+
+% ##############################################################
+% ##############################################################
+% ##############################################################ermitteln
+\chapter{Einleitung}
+
+
+Dieses Buch stellt Ihnen alle wesentlichen Neuerungen aus den LTS-Releases
+(Long Term Support)\index{LTS-Release}\index{Long Term Support}\index{LTS}
+Java 17 LTS, Java 21 LTS und dem brandaktuellen Java 25 LTS vor.
+
+
+Alle Leser, die privat oder beruflich noch auf die älteren Releases
+Java 8 LTS oder Java 11 LTS setzen, finden in Anhang \ref{cha:Wesentliches aus Java 8 LTS, 9, 10 und 11 LTS}
+einen kompakten Schnelleinstieg
+zu den heraus\-ragendsten bzw. bedeutendsten Änderungen aus diesen  Java-Versionen,
+um sich für die Erweiterungen in modernem Java inhaltlich und syntaktisch vorzubereiten.
+
+
+Bevor wir uns mit den in diesem Buch behandelten Themen beschäftigen,
+möchte ich die Veränderungen der letzten Jahre in der Releasepolitik von Oracle
+darlegen, weil sich hier einiges getan hat.
+
+
+
+
+% #########################################################
+% #########################################################
+% #########################################################
+\section{Releasepolitik}
+\index{Releasepolitik}
+
+
+Vor Java 9 gab es keinen festen Takt oder Releasezyklus.\index{Releasezyklus}
+Stattdessen war die Veröffentlichung einer neuen Java-Version an die Fertigstellung
+wesentlicher Funktionen geknüpft. Viele erinnern sich bestimmt noch gut daran:
+ In der Vergangenheit wurden Java-Releases aufgrund unfertiger Features häufiger verschoben.
+
+
+Beispielsweise wurde Java 6 im Dezember 2006 veröffentlicht, während sein Nachfolger Java 7
+erst im Juli 2011, also fast fünf Jahre später, erschien. Java 8 LTS, das im März 2014 veröffentlicht
+wurde, verzögerte sich mehrmals, hauptsächlich aufgrund unvollendeter wichtiger Funktionalitäten.
+Selbst Java 9 wurde mehr als einmal gegenüber dem ursprünglichen Zeitplan verschoben --
+vor allem wegen der Komplexität der Modularisierung.
+
+
+Diese langen und unvorhersehbaren Veröffentlichungsintervalle erschwerten sowohl den Anwendern als auch den Tool-Anbietern die Planung. Um dem entgegenzuwirken, hat Oracle nach der Veröffentlichung von Java 9 im September 2017 auf einen halbjährlichen Release-Zyklus umgestellt. Das erlaubt es,  die jeweils bis zu diesem Zeitpunkt fertig implementierten Funktionalitäten zu veröffentlichen.
+Allerdings sind logischerweise nicht immer schon alle Features auch so weit, um final
+veröffentlicht zu werden. Daher gibt es seit Java 9 zwei Besonderheiten:
+die  Preview-Features und  die Incubator-Features.
+
+
+
+
+% #########################################################
+\subsubsection{Preview-Features}\index{Preview-Feature}
+\label{subsubsec:Preview-Features}
+
+
+Sogenannte Preview-Features sind zwar vollständig spezifiziert und implementiert.
+Sie werden aber zunächst als Vorschau zum Sammeln von Erfahrungen und Feedback ins
+JDK integriert. Basierend auf den Rückmeldungen kann sich die Implementierung,
+etwa verwendete Typen, Methodensignaturen usw., allerdings noch ändern.
+Insgesamt möchte man der Funktionalität durch die gesammelten Erfahrungen und Rückmeldungen
+dann in Folgereleases einen Feinschliff  geben. In Ausnahmefällen können die gewonnenen Erkenntnisse auch zu
+ einem Abbruch der Weiterentwicklung oder einer Neuausrichtung führen.
+
+
+Preview-Features  sind standardmäßig nicht zugänglich
+und müssen explizit über die Angabe von \code{-}\code{-enable-preview}
+sowohl beim Kompilieren als auch beim Ausführen  aktiviert werden, um
+sie in eigenen Programmen verwenden zu können.
+Beim Kompilieren  muss (bis Java 22) zudem eine Source-Version
+ mit  \code{-}\code{-source} angegeben werden --
+seit Java 23 ist dies optional.
+
+
+
+
+% #########################################################
+\subsubsection{Incubator-Features}\index{Incubator-Feature}
+
+
+Ergänzend zu den Preview-Features  gibt es  sogenannte Incubator-Features,
+die in Form korrespondierender Module implementiert und bereitgestellt werden.
+Auch hierbei geht es um das Sammeln von Erfahrungen und Feedback, allerdings
+auf Basis einer  vorläufigen Umsetzung.
+Es kann bei Incubator-Features durchaus sein, dass sich Dinge noch grundlegend ändern
+oder Funktionalitäten sogar später vollständig entfernt
+bzw. gar nicht in ein finales JDK aufgenommen werden. Weil Incubator-Features bzw.
+die bereitstellenden Module nicht offizieller Bestandteil des JDKs sind, müssen diese speziell
+eingebunden werden. Dazu dient der JVM-Aufrufparameter \code{-}\code{-add-modules}.
+Dieser ist sowohl beim Kompilieren als auch beim Ausführen anzugeben.\footnote{Interessanterweise
+gilt dies für das Kompilieren nicht innerhalb von Eclipse. Dort muss
+lediglich die Run Configuration passend parametriert werden.}
+
+
+
+
+
+
+% #########################################################
+\subsubsection{Releasekadenz im Wandel und die Auswirkungen}
+
+
+Kommen wir auf die Releasekadenz zurück.\index{Releasekadenz}\index{Releasekadenz!im Wandel}
+Bis einschließlich Java 9 wurden neue Java-Versionen immer Feature-basiert
+veröffentlicht.\index{Releasestrategie!Feature-basierte}
+Das hatte in der Vergangenheit oftmals und mitunter auch beträchtliche  Verschiebungen des
+geplanten Releasetermins zur Folge, nämlich immer dann, wenn  für die Version wesentliche Features noch
+nicht fertiggestellt waren. Insbesondere deshalb verzögerten sich die Veröffentlichungen von
+Java~8 LTS und Java~9 um mehrere Monate bzw. sogar über ein Jahr.
+ Schlimmer noch: Es war damals absolut nicht abzusehen
+oder vorab zu planen, wann eine neue Java-Version tatsächlich veröffentlicht werden würde.
+
+Die Umstellung auf eine zeitbasierte Releasestrategie\index{Releasestrategie!zeitbasierte}
+wirkt derartigen Verzögerungen entgegen und erhöht die Planbarkeit, weil jedes halbe Jahr
+eine neue Java-Version veröffentlicht wird, die all jene Features enthält, die bis zu
+dem Termin fertiggestellt sind.
+Zudem sollte alle drei Jahre eine LTS-Version (Long Term Support) erscheinen. Eine
+solche ist in etwa vergleichbar mit den früheren Major-Versionen. Das war zwischen Java 11 LTS
+und 17 LTS  auch der Fall. Mit Letzterem wurde dann eine Verkürzung des
+LTS-Zyklus auf 2 Jahre beschlossen, wodurch auch diejenigen Nutzer schneller von den
+Neuerungen profitieren, die lediglich von LTS zu LTS springen wollen oder können.
+
+Lassen Sie mich noch auf Folgendes hinweisen:
+Zwar kann die schnelle, halbjähr\-liche Releasefolge eine größere Herausforderung für Toolhersteller sein,
+für uns als Entwickler ist sie aber oftmals positiv, weil wir weniger lang auf neue
+Features warten müssen.  Das konnte früher recht zermürbend sein.
+
+
+Allerdings gilt das Positive vor allem für eigene Hobbyprojekte, weil man dort
+mit den Neuerungen experimentieren kann und weniger durch Restriktionen
+eingeschränkt ist.
+Im professionellen Einsatz wird man eher auf Kontinuität und die Verfügbarkeit
+von Security Updates setzen, weshalb in diesem Kontext vermutlich nur
+LTS-Versionen in Betracht kommen, um Migrationsaufwände kalkulierbar und
+ besser planbar zu halten.
+
+
+
+
+% #######################################################################
+\begin{praxistipp}{Am Rande ...}
+\begin{center}
+\begin{minipage}{\textwidth-0.6cm}
+Für jeden Entwickler (Amateur oder Profi) hat der halbjährliche Releasezyklus\index{Releasezyklus!halbjährlicher}
+einen weiteren Vorteil:
+Man kann sich häppchenweise mit neuen Features beschäftigen, wenn sie erscheinen, und
+muss nicht alle zwei, drei oder mehr Jahre einen Riesenbatzen Neuerungen am Stück durcharbeiten,
+wobei man  durch den schieren Umfang an Änderungen gegebenenfalls einige relevante Dinge übersehen
+kann oder  aus Zeitgründen auf \frqq das les ich mir später durch\flqq{} verschieben muss.
+\end{minipage}
+\end{center}
+\end{praxistipp}
+
+
+
+
+% #########################################################
+\subsubsection{Lizenzpolitik im Wandel und die Auswirkungen}\index{Lizenzpolitik}\index{Lizenzpolitik!im Wandel}
+
+
+Nicht nur beim Releasezyklus, sondern insbesondere auch bei der Lizenzpolitik
+gab es in den letzten Jahren ein paar Überraschungen.
+
+
+All diejenigen, die Java 11 LTS herunterladen wollten, wurden durch einen
+markanten Hinweis auf die Änderungen in der Lizenzpolitik hingewiesen.
+
+
+% 1?708×845, 150dpi => *.72
+\begin{figure}[htb]
+\centering
+\includegraphics[bb=0 0 1229.76 608.4,width=\textwidth]{Abbildungen/NewLicense.png}
+%\includegraphics[bb=0 0 1229.76 608.4,height=5.5cm]{Abbildungen/NewLicense.png}
+\caption{Hinweis auf neue Lizenzbedingungen, exemplarisch für Java 11 LTS}
+\end{figure}
+
+
+\noindent
+Dort war zu entnehmen, dass sich die Lizenzierungsbedingungen ändern.
+Das hat Einfluss, wenn Sie Ihre Software  kommerziell  vertreiben oder dies planen zu tun:
+\important{Das Oracle JDK war vor Java 8 LTS selbst in Produktions"-sys"-temen
+immer kostenfrei verwendbar, wurde dann aber mit Java 11 LTS leider kostenpflichtig}.\index{OpenJDK}\index{Oracle JDK}\index{Lizenzpolitik}
+Als Alternative existiert etwa das OpenJDK (\url{https://openjdk.org/}).
+Während der Entwicklung kann das Oracle JDK allerdings weiterhin kostenfrei genutzt werden.
+
+
+Dieser Schritt, die Benutzer zur Lizenzierung zu nötigen, hat bei der Entwickler\-gemeinde
+ für Verstimmung gesorgt. Und es kam noch schlimmer: Kurze Zeit nach der Einschränkung für
+Java 11 LTS wurden rückwirkend auch die Lizenzierungsbedingungen für Java 8 LTS
+auf kostenpflichtig geändert. Viele Firmen haben daher erst einmal
+keine weiteren Updates auf neuere Versionen vorgenommen.
+
+
+Insgesamt kam es zu einer massiven Gegenreaktion. Diese wurde erleichtert,
+weil das OpenJDK seit Java 11 LTS auf den gleichen Sourcen wie das Oracle JDK beruht
+und man das OpenJDK kostenfrei beziehen kann. Basierend darauf haben sich diverse Firmen und
+Konsortien daran gemacht, freie Versionen von Java bereitzustellen.
+Hier seien Azul Zulu, Adopt OpenJDK (mittlerweile Adoptium Temurin\index{Adoptium Temurin}) oder
+Amazon Corretto\index{Amazon Corretto} stellvertretend für viele weitere genannt.
+
+
+\important{Bei Oracle hatte man mit der Veröffentlichung von Java 17 LTS ein Einsehen und das Oracle JDK
+steht nun auch für kommerzielle Zwecke wieder kostenfrei zur Ver"-fügung}. Die zugehörige Lizenz
+wird übrigens als No-Fee Terms and Conditions (NFTC)\index{NFTC}\index{No-Fee Terms and Conditions} bezeichnet.
+
+
+Ein wenig unverständlich ist allerdings, dass Java 11 LTS weiterhin einer kostenpflichtigen Lizenz unterliegt.
+Damit wird es noch unattraktiver und wohl kaum mehr als Zwischenschritt auf dem Weg zu Java 17 LTS,
+ Java 21 LTS oder Java 25 LTS eingesetzt werden -- es sei denn, man nimmt ein anderes JDK als das von Oracle.
+
+
+
+
+% ##############################################################
+% ##############################################################
+% ##############################################################
+\section{Inhaltsübersicht}
+
+
+Dieses Buch behandelt diverse Erweiterungen,
+die in Java 17 LTS, Java 21 LTS sowie dem brandaktuellen Java 25 LTS gebündelt sind.
+Diese LTS-Versionen werden jeweils in eigenen Teilen des Buchs beschrieben, sodass Sie
+sehr schnell die wesentlichen Neuerungen der von Ihnen genutzten oder präferierten
+Java-Version kompakt und fundiert im Überblick haben.
+
+
+
+
+% ##############################################################
+% ##############################################################
+\subsection{Teil I: Neuerungen in Java 12 bis 17 LTS}
+
+
+In diesem Teil sind die Neuerungen ein wenig kompakter und lediglich in einer
+Auswahl beschrieben, da Java 17 LTS mittlerweile weitverbreitet sein sollte.
+Für einen fundierten Einstieg und eine ausführlichere Darstellung der
+relevanten Neuerungen verweise ich Sie auf mein
+Buch \frqq Java 21 LTS bis 24 -- Coole neue Java-Features\flqq{} \cite{Java-21-LTS-24:2025}.
+
+
+Dieses Kapitel fokussiert sich auf verschiedene Änderungen an der Syntax von Java, etwa
+ \frqq Text Blocks\flqq{}, die mehrzeilige Strings erlauben.
+Auch bezüglich \code{switch} hat sich einiges getan.
+Die neue Syntax erleichtert die Angabe und Auswertung von Bedingungen und
+sorgt für mehr Klarheit und Verständlichkeit.
+Zusätzlich bietet modernes Java mit Records ein ganz besonders
+ interessantes Feature, womit eine extrem kompakte Schreibweise zum Deklarieren
+spezieller Klassen mit unveränderlichen Daten bereitgestellt wird.
+Darüber hinaus gibt es einige für die Praxis weniger relevante Features, die aber teilweise
+die Grundlage für weitere Neuerungen in zukünftigen Java-Versionen bilden:
+ Im Kontext von \code{instanceof} ist es möglich,
+künstliche Hilfsvariablen und unschöne Casts zu vermeiden.
+
+
+Kommen wir zu den APIs: Hier finden wir  Ergänzungen in der Klasse \code{String}.
+Zudem enthält das Stream-API einige nennenswerten Neuerungen, unter anderem den  Teeing-Kollektor
+ sowie die Methoden \code{toList()} und  \code{mapMulti()}.
+Des Weiteren wurde als JVM-Neuerung eine hilfreiche
+Verbesserung zur Fehleranalyse bei \code{NullPointerException}s integriert.
+
+
+
+
+
+
+% ##############################################################
+% ##############################################################
+\subsection{Teil II: Neuerungen in Java 18 bis 21 LTS}
+
+
+Bezüglich der Syntax finden wir in den Java-Versionen 18 bis 21 LTS
+diverse  wesentliche Neuerungen -- teilweise
+allerdings erst als Preview-Feature. Mit String Templates ließ sich in Java 21 LTS und
+Java 22 die Konkatenation von  variablen und fixen Textbestandteilen zu einem Ergebnisstring vereinfachen.
+ Dieses Preview-Feature wurde mit Java 23 wieder aus dem JDK entfernt. Daher gehe
+ ich nicht weiter darauf ein.
+
+Record Patterns erweitern das Pattern Matching für \code{instanceof} und
+ermöglichen es, Records auf ein\-fache Weise  in ihre Bestandteile zu zerlegen und darauf
+zuzugreifen. Das Pattern Matching wurde ursprünglich im Kontext von
+ \code{instanceof}\ in die Sprache integriert. Es funktioniert in modernem Java
+ auch in \code{switch} und wurde funktionell aufgewertet.
+Dabei ist insbesondere die Kombination mit den Record Patterns erwähnenswert.
+ Schließlich wird es durch Unnamed Patterns and Variables möglich,
+verschiedene Elemente in einem Record Pattern oder eine Variable durch
+einen einzelnen Unterstrich (\frqq\code{\_}\flqq{}) zu ersetzen, um diese als ungenutzt und unbrauchbar zu markieren.
+
+
+Java 21 LTS enthält einige API-Neuerungen, etwa kleinere
+Erweiterungen rund um Reflection mit Method Handles und die Adressauflösung von
+Internetadressen. Allerdings gibt es mit Sequenced Collections und
+Virtual Threads auch zwei Highlights. Sequenced Collections erlauben es,
+verschiedene Arten von Collections gleichartig von vorne und von hinten zu verarbeiten.
+Mit Virtual Threads erzielt man eine enorme Vereinfachung beim Multithreading und es lassen sich
+ jetzt mehrere Tausend, ja sogar Hunderttausende oder mehr
+Threads erzeugen. Dadurch kann man dem Thread-per-Request-Ansatz folgen.
+
+
+Ergänzend schauen wir uns einige Änderungen, Erweiterungen und Neuerungen in der JVM an,
+die kumulativ in Java 18 bis 21 LTS enthalten sind. Das sind unter anderem der
+ Simple Web Server sowie eine Verbesserung bei der Angabe von
+  Code Snippets in JavaDoc. Abschließend wird das Feature
+   Unnamed Classes and Instance Main Methods behandelt, das insbesondere die Art und Weise
+   des Applikationsstarts verändert und zudem Vereinfachungen beim Einstieg in
+   Java bringt, indem man auf Klassen und einigen Boilerplate-Code bei
+   kleineren Java-Programmen verzichten kann.
+
+
+
+% ##############################################################
+% ##############################################################
+\subsection{Teil III: Neuerungen in Java 22 bis 25 LTS}
+
+
+Bezüglich der Syntax gibt es in den Java-Versionen 22 bis 25 LTS diverse  wesentliche Neuerungen -- teilweise
+sind diese allerdings erst als Preview-Feature realisiert.
+
+
+Um Variablen oder Teile innerhalb von Record Patterns durch einen Unterstrich (\frqq\code{\_}\flqq{})
+als unbenutzt und unbrauchbar zu markieren, dient das finale Feature namens \frqq Unnamed Variables \& Patterns\flqq{}.
+Als weiteres finales Feature ist das Kommentieren von Sourcecode mit Markdown integriert.
+Damit kann man eine besser lesbare und knappere Dokumentation als mit den bisherigen JavaDoc-HTML-Schnipseln definieren. Ebenfalls finale Features sind die Module Import Declarations und die Flexible Constructor Bodies:
+Die Imports am Anfang einer Java-Datei lassen sich durch Modul-Imports aufgeräumter  und übersichtlicher gestalten.
+Flexible Constructor Bodies erleichtern Initialisierungsaktionen.
+Noch als Preview-Feature findet sich die Neuerung Primitive Types in Patterns. Damit
+lassen sich nun auch Pattern für primitive Typen in \code{instanceof} und \code{switch}
+angeben.
+
+
+Bezüglich API-Erweiterungen bringt Java 25 LTS beispielsweise
+das Foreign Function \& Memory (FFM)  API\index{Foreign Function \& Memory APIs}. Dieses
+stellt ein API zum Zugriff auf Funktionalitäten und Speicherbereiche, die außerhalb der JVM liegen, bereit.
+Ebenso sind die Stream Gatherer  eine sehr nützliche Ergänzung. Diese erweitern das Stream-API um
+die Möglichkeit, benutzerdefinierte Intermediate Operations bereitstellen zu können.
+Praktischerweise sind bereits ein paar Stream Gatherer  vordefiniert.
+ Als Highlight soll die Structured Concurrency nicht unerwähnt bleiben.
+ Diese stellt eine massive Vereinfachung im Kontext von Multi\-threading dar und  erlaubt es,
+ Aufgaben in Teil\-aufgaben aufzuspalten, diese  parallel zu verarbeiten und deren Ergebnisse  zusammenzuführen.
+ Dabei existieren verschiedene Strategien, wie dabei vorgegangen werden soll, etwa für die Fälle, dass alle oder nur
+ ein Ergebnis relevant ist.
+
+
+Als JVM-Verbesserungen wurde unter anderem Launch Multi-File Source-Code Programs umgesetzt.
+Das bietet die Möglichkeit, mehrere einzelne Java-Dateien direkt ohne explizites vorheriges Kompilieren ausführen.
+Ergänzend erleichtern die Compact Source Files and Instance Main Methods den Einstieg in  Java.
+
+
+
+
+% #########################################################
+% #########################################################
+\section{Grundgerüst des Beispielprojekts}\index{Beispielprojekt!mitgeliefertes}\index{Beispielprojekt!Grundgerüst}
+
+
+Das mitgelieferte Projekt orientiert sich in seinem Aufbau an
+dem  des Buchs und bietet für jedes Kapitel
+jeweils ein eigenes Package, z.\,B. \code{ch04\_syntax\_java\_18\_21} oder
+\code{ch05\_api\_java\_18\_21}. Dabei weiche ich ausnahmsweise von
+der Namenskonvention für Packages ab, weil ich die Unterstriche
+ in diesem Fall für eine besser lesbare Notation halte.
+
+Das Projekt folgt dem Maven-Standardverzeichnisaufbau mit den
+Sourcen unter \code{src/main/java} und den Tests unter \code{src/test/java}.\footnote{Da in diesem Buch vor allem
+Beispiele zur Demonstration der Neuerungen enthält, verzichte ich auf die in der Praxis empfehlenswerten Unit Tests.
+Daher ist das Testverzeichnis leer.}
+
+
+%725?×?1219
+\begin{figure}[htb]
+\centering
+\includegraphics[bb=0 0 522 877.68,height=11.5cm]{Abbildungen/J25b/Project-Java-25-LTS-src-main-java.png}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\vfill
+\pagebreak
+% #########################################################
+% #########################################################
+% #########################################################
+\section{Anmerkung zum Programmierstil}\index{Programmierstil}
+
+
+In diesem Abschnitt möchte ich  vorab etwas zum Programmierstil
+sagen, weil   bei Ihnen vielleicht ab und an einmal die Frage aufkommen mag,
+ob man gewisse Dinge nicht kompakter gestalten könnte oder sollte.
+
+
+
+
+%#######################################################################
+%#######################################################################
+\subsection{Gedanken zur Sourcecode-Kompaktheit}
+
+
+In der Regel sind  mir  beim Programmieren und insbesondere für die
+Implementierungen in diesem Buch vor allem eine leichte Nachvollziehbarkeit sowie
+ eine übersicht\-liche Strukturierung und damit  später eine vereinfachte
+  Veränderbarkeit wichtig. Deshalb sind die gezeigten Implementierungen
+ möglichst verständlich programmiert.
+ Dadurch ist vielleicht  nicht jedes Konstrukt maximal kompakt, dafür aber in
+ der Regel  gut nachvollziehbar. Diesem Aspekt möchte ich in diesem
+ Buch den Vorrang geben. Auch in der Praxis  kann man damit oftmals besser
+ leben als mit einer schlechten Wartbarkeit, dafür aber einer kompakteren
+ Realisierung.
+
+
+
+
+% #########################################################
+\subsubsection{Beispiel}
+
+
+Zur Verdeutlichung betrachten wir eine lesbare, gut verständliche,
+rekursive Implementierung zum Umdrehen des Inhalts eines Strings, die zudem sehr schön die
+beiden wichtigen Elemente des rekursiven Abbruchs und Abstiegs zeigt:
+
+
+\lstset{mathescape=true}
+\vspace{-0.85mm}
+\begin{lstlisting}
+public String reverseString(final String input)
+{
+    // $\mbox{\bfseries rekursiver Abbruch}$
+    if (input.length() <= 1)
+        return input;
+
+
+    final char firstChar = input.charAt(0);
+    final String remaining = input.substring(1);
+
+    // $\mbox{\bfseries rekursiver Abstieg}$
+    return $\mbox{\bfseries reverseString(remaining)}$ + firstChar;
+}
+\end{lstlisting}
+\vspace{-0.85mm}
+\lstset{mathescape=false}
+
+
+\noindent
+Die folgende deutlich kompaktere Variante bietet diese
+Vorteile nicht:
+
+
+\lstset{mathescape=true}
+\vspace{-0.85mm}
+\begin{lstlisting}
+public String reverseStringShort(final String input)
+{
+    return input.length() <= 1 ? input :
+           reverseStringShort(input.substring(1)) + input.charAt(0);
+}
+\end{lstlisting}
+\vspace{-0.85mm}
+\lstset{mathescape=false}
+
+
+Überlegen Sie  kurz, in welcher der beiden Methoden Sie
+sich sicher fühlen, eine nachträgliche Änderung vorzunehmen.
+Und wie sieht es aus, wenn Sie noch Unit Tests
+ergänzen wollen: Wie finden Sie passende Wertebelegungen und Prüfungen?
+
+
+Außerdem sollte man bedenken, dass die
+obere Variante entweder bereits während der
+Kompilierung (Umwandlung in den Bytecode) oder
+später während der Ausführung und Optimierung
+automatisch in etwas Ähnliches wie die untere Variante konvertiert wird --
+eben mit dem Vorteil der besseren Lesbarkeit beim Programmieren.
+
+
+
+
+
+
+%\vfill
+%\pagebreak
+%#######################################################################
+%#######################################################################
+\subsection{Gedanken zu \texttt{final} und \texttt{var}}
+
+
+Normalerweise bevorzuge ich, Variablen als \code{final} zu markieren, um diese
+als unveränderlich zu kennzeichnen. In diesem Buch verzichte ich mitunter darauf.
+Ein Grund ist, dass die interaktive Kommandozeilenapplikation JShell (vgl. Abschnitt \ref{sec:Java + REPL})
+das Schlüsselwort \code{final} nicht überall unterstützt, aber für Parameter und lokale Variablen
+innerhalb von Methoden.
+
+
+\subsubsection{Local Variable Type Inference -- \texttt{var}}\index{Local Variable Type Inference}\indexCode{var}
+Seit Java 10 existiert die sogenannte \importantAndIndex{Local Variable Type Inference},
+besser bekannt als \code{var} (vgl. Abschnitt \ref{sec:Syntaxerweiterung var}).
+Diese erlaubt es, auf die explizite Typangabe
+auf der linken Seite einer Variablendefinition zu verzichten, sofern  sich der
+konkrete Typ für eine lokale Variable anhand der Definition auf der
+rechten Seite der Zuweisung vom Compiler ermitteln lässt:
+
+
+\lstset{morekeywords={var}}
+\lstset{mathescape=true}
+\vspace{-0.85mm}
+\begin{lstlisting}
+var name = "Peter";                // $\mbox{\bfseries var => String}$
+var chars = name.toCharArray();    // $\mbox{\bfseries var => char[]}$
+var mike = new Person("Mike", 47); // $\mbox{\bfseries var => Person}$
+var hash = mike.hashCode();        // $\mbox{\bfseries var => int}$
+\end{lstlisting}
+\vspace{-0.85mm}
+\lstset{mathescape=false}
+
+
+\noindent
+Insbesondere im Zusammenhang mit generischen Containern spielt die
+Local Variable Type Inference ihre Vorteile aus:
+
+
+\lstset{mathescape=true}
+\vspace{-0.85mm}
+\begin{lstlisting}
+// $\mbox{\bfseries var => ArrayList<String> }$
+var names = new ArrayList<String>();
+names.add("Tim");
+names.add("Tom");
+names.add("Jerry");
+
+
+// $\mbox{\bfseries var => Map<String, Long> }$
+var personAgeMapping = Map.of("Tim", 47L, "Tom", 12L,
+                              "Michael", 47L, "Max", 25L);
+\end{lstlisting}
+\vspace{-0.85mm}
+\lstset{mathescape=false}
+
+
+\subsubsection{Konvention: \texttt{var}, falls lesbarer}
+Sofern die Verständlichkeit nicht darunter  leidet, werde ich \code{var}
+an geeigneter Stelle verwenden, um den Sourcecode kürzer und
+klarer zu halten. Ist jedoch eine Typangabe für das Nachvollziehen
+von größerer Wichtigkeit, bevorzuge ich den konkreten Typ und
+ vermeide \code{var} -- die Grenzen sind aber fließend.
+
+
+\subsubsection{Konvention: \texttt{final} oder \texttt{var}}
+Eine weitere  Anmerkung noch: Zwar kann man \code{final} und \code{var}
+kombinieren, ich finde dies jedoch stilistisch nicht schön, weil dann die
+Kürze von \code{var} verloren geht. Daher verwende ich
+entweder das eine oder das andere.
+
+
+
+
+
+
+
+
+%#######################################################################
+%#######################################################################
+\subsection{Blockkommentare in Listings}
+Beachten Sie bitte, dass sich in den Listings immer mal wieder
+der Orientierung und dem besseren Verständnis dienende Blockkommentare
+(Kommentare über einem Block oder einer Folge von Anweisungen, wie unten
+\code{// Prozess erzeugen}) finden.
+In der Praxis sollte man derartige Kommentare mit Bedacht einsetzen und
+ einzelne Sourcecode-Abschnitte bevorzugt in Methoden auslagern. Für die Beispiele
+des Buchs dienen diese Kommentare aber als Anhaltspunkte, weil die
+eingeführten oder dargestellten Sachverhalte für Sie als Leser vermutlich
+noch neu und ungewohnt sind.
+%
+%\vfill
+%\pagebreak
+\lstset{mathescape=true}
+\vspace{-0.85mm}
+\begin{lstlisting}
+// $\mbox{\bfseries Prozess erzeugen}$
+final String command = "sleep 60s";  // für Windows: "cmd timeout 60"
+final Process sleeper = Runtime.getRuntime().exec(command);
+//    ...
+
+
+// $\mbox{\bfseries Prozess über dessen Id in ProcessHandle wandeln }$
+final ProcessHandle sleeperHandle = ProcessHandle.of(sleeper.pid()).
+                                    orElseThrow(IllegalStateException::new);
+//    ...
+\end{lstlisting}
+\vspace{-0.85mm}
+\lstset{mathescape=false}
+
+
+
+
+
+
+%#######################################################################
+%#######################################################################
+\subsection{Gedanken zur Formatierung}\index{Formatierung!Gedanken zur}
+
+
+Die in den Listings genutzte Formatierung weicht leicht von den Coding Conventions von\index{Coding Conventions}
+Oracle\footnote{\url{https://www.oracle.com/java/technologies/javase/codeconventions-introduction.html}} ab.
+Ich bevorzuge diejenigen von Scott Ambler\footnote{\url{http://www.ambysoft.com/essays/javaCodingStandards.html}},
+weil er insbesondere öffnende geschweifte Klammern in jeweils eigenen Zeilen vorschlägt.
+Dazu habe ich ein spezielles Format namens \code{Michaelis\_CodeFormat} erstellt.
+Dieses ist im Projekt-Download integriert und wird nachfolgend für eine Klasse demonstriert:
+
+
+\lstset{mathescape=true}
+\vspace{-0.75mm}
+\begin{lstlisting}
+import java.util.Arrays;
+import org.apache.log4j.Logger;
+
+
+public final class FormattingExample
+{
+    private static final Logger log = Logger.getLogger("FormattingExample");
+
+
+    public static String asHex(final byte[] telegram)
+    {
+        log.info("asHex(" + Arrays.toString(telegram) + ")");
+
+
+        final StringBuffer sb = new StringBuffer("0x");
+
+
+        for (int i = 0; i < telegram.length; i++)
+        {
+            final String hex = Integer.toHexString(telegram[i]);
+            sb.append(hex);
+        }
+
+
+        return sb.toString();
+    }
+    // ...
+}
+\end{lstlisting}
+\vspace{-0.75mm}
+\lstset{mathescape=false}
+
+
+
+
+
+
+
+
+\vfill
+\pagebreak
+% ######################################################################
+% ######################################################################
+% ######################################################################
+\section{Installation von Java 25 LTS}
+\label{sec:Installation von Java 25 LTS}
+\index{Installation}
+
+
+Damit Sie die im Buch beschriebenen Java-Programme ausführen können,
+müssen Sie ein JDK (Java Development Kit) installieren oder bereits installiert haben.
+Beginnen wir also mit der Installation von Java.
+
+
+
+
+% ######################################################################
+% ######################################################################
+\subsection{Java-Download}
+\index{Download}\index{Java!Download}
+
+
+Java ist kostenfrei auf der Oracle-Webseite \url{https://www.oracle.com/java/technologies/downloads/}
+verfügbar (vgl. Abbildung \ref{Java-Download-Seite}).
+
+
+% 2728?×?1858
+\begin{figure}[htb]
+\centering
+\includegraphics[bb=0 0 1964.16 1337.76, width=\textwidth]{Abbildungen/Java25/Oracle-Java-25-Download.png}
+\caption{Java-Download-Seite}\label{Java-Download-Seite}
+\end{figure}
+
+
+\medskip
+\medskip
+\noindent
+Im unteren Bereich der Webseite finden Sie verschiedene Links für unterschiedliche
+Betriebssysteme. Wählen Sie den für Sie passenden Link und laden Sie
+die entsprechende Installationsdatei herunter, in obiger Abbildung exemplarisch für
+macOS gezeigt.
+
+
+
+
+% ######################################################################
+% ######################################################################
+\subsection{Installation des JDKs}
+\index{Installation}\index{Java!Installation}
+
+
+\paragraph{Windows}
+Für Windows doppelklicken Sie bitte auf die \code{.exe}-Datei. Diese kann nach
+erfolgreicher Installation gelöscht werden. Führen Sie das heruntergeladene Installationsprogramm aus
+(z.\,B. \code{jdk-25\_windows-x64\_bin.exe}). Damit wird Java
+standard\-mäßig in das Verzeichnis \code{C:\string\Program} \code{Files\string\Java\string\jdk-25}
+installiert, wobei der Verzeichnisname von der gewählten Java-Version abhängt.
+Akzeptieren Sie die Standard"-einstellungen und befolgen Sie die Anweisungen
+während der Installation.
+
+
+\paragraph{macOS}
+Zum Start der Installation doppelklicken Sie unter macOS  auf die \code{.dmg}-Datei
+ und folgen den Aufforderungen.  Möglicherweise müssen Sie das Administrator-Passwort
+eingeben, um fortzufahren.
+Nach Abschluss der Installation können Sie die \code{.dmg}-Datei löschen,
+um Speicherplatz zu sparen.
+
+
+
+
+% ######################################################################
+% ######################################################################
+\subsection{Installationsnacharbeiten}
+\label{subsec:Installationsnacharbeiten}
+
+
+Damit Java bei Ihnen nach dem Download und der Installation  korrekt funktioniert, sind ein paar Nacharbeiten nötig.
+Dazu sollten wir die Installationsverzeichnisse sowie die der Executables zur leichteren Handhabung in
+die Umgebungsvariable \code{PATH}  aufnehmen. Dies wird im Anschluss für die Betriebssysteme
+Windows und macOS beschrieben. Für Unix-Derivate finden Sie weitere Informationen
+hier: \url{https://www.java.com/de/download/help/download\_options.html}.
+Für Windows und macOS gibt es dort ebenfalls einige ergänzende Informationen zur
+Installation.
+
+
+
+
+% ######################################################################
+\subsubsection{Nacharbeiten für Windows}
+
+
+Bei einer deutschen Variante von Windows können Sie die Umgebungsvariable \code{PATH}
+unter \frqq Umgebungsvariablen\flqq{} ändern. Drücken Sie die Win-Taste
+und geben Sie dann  \frqq umgeb\flqq{}  ein, bis \frqq Systemumgebungsvariablen bearbeiten\flqq{}
+erscheint (vgl. Abbildung \ref{fig:Systemumgebungsvariablen}).
+
+
+%800?×?750
+\begin{figure}[htb]
+\centering
+\includegraphics[bb=0 0 576 540,height=8.5cm]{Abbildungen/Java22/Systemumgebungsvariablen.png}
+\captionAndLabel{Systemumgebungsvariablen ändern}{fig:Systemumgebungsvariablen}
+\end{figure}
+
+
+\noindent
+Mit \frqq Enter\flqq{}-Taste öffnet sich der Dialog \frqq Systemvariablen\flqq{} (vgl. Abbildung \ref{fig:Java-Standard-Verzeichnis}).
+
+% 828?×?766
+\begin{figure}[htb]
+\centering
+\includegraphics[bb=0 0 596.16 551.52,height=8cm]{Abbildungen/Java25/set-JAVA_HOME-Windows-jdk-25.png}
+\captionAndLabel{Umgebungsvariable \texttt{JAVA\_HOME} setzen}{fig:Java-Standard-Verzeichnis}
+\end{figure}
+
+
+\noindent
+Klicken Sie dann auf den Button \frqq Bearbeiten\flqq{} zum Öffnen
+eines Bearbeitungsdialogs. Fügen Sie eine Umgebungs\-variable namens \code{JAVA\_HOME} hinzu.
+Diese muss auf das Installationsverzeichnis, etwa \code{C:\string\Program} \code{Files\string\Java\string\jdk-25},
+verweisen, wie es Abbildung \ref{fig:Umgebungsvariablen-1} zeigt.
+
+
+% 831?×?390
+\begin{figure}[htb]
+\centering
+\includegraphics[bb=0 0 598.32 280.8, width=\textwidth]{Abbildungen/Java25/Umgebungsvariablen-1.png}
+\caption{Umgebungsvariablen bearbeiten}\label{fig:Umgebungsvariablen-1}
+\end{figure}
+
+
+\noindent
+Ergänzen Sie die Variable \code{PATH} um den Eintrag \code{\%JAVA\_HOME\%\string\bin},
+wie  es nachfolgende Abbildung \ref{fig:Umgebungsvariablen-2} zeigt.
+Außerdem sollte der Eintrag möglichst weit oben stehen, damit dieser sicher den Pfad zur
+aktuellen Java-Version festlegt:
+
+
+% 595?×?206
+\begin{figure}[htb]
+\centering
+\includegraphics[bb=0 0 428.4 148.32, width=\textwidth]{Abbildungen/Java21/Umgebungsvariablen-2.png}
+\caption{Umgebungsvariablen ordnen}\label{fig:Umgebungsvariablen-2}
+\end{figure}
+
+
+\noindent
+Beachten Sie bitte noch Folgendes:
+Bestätigen Sie die  gesamten Dialoge immer mit OK, sodass die
+Variablen gesetzt sind. Eventuell geöffnete Eingabeaufforderungen müssen
+geschlossen und neu geöffnet werden, um die geänderten Variablen
+wirksam werden zu lassen.
+
+
+Ähnliches gilt für einige IDEs, die ebenfalls Umgebungsvariablen referenzieren und nutzen.
+Beispielsweise cached IntelliJ das Environment. Bei Änderungen erfordert dies gegebenenfalls einen Neustart.
+
+
+
+
+
+
+% ######################################################################
+\subsubsection{Nacharbeiten für macOS}
+
+
+Auch unter macOS empfiehlt es sich, einen Verweis auf Java im Pfad  in der jeweiligen
+Shell (dem Terminal) passend zu setzen bzw. in das Startskript Ihrer Shell einzutragen, etwa
+\code{\string~/.bash\_profile} oder neuer \code{\string~/.zshrc}:
+
+
+\begin{lstlisting}
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-25.jdk/Contents/Home
+export PATH=$JAVA_HOME/bin:$PATH
+\end{lstlisting}
+
+
+Für macOS geschieht dies über das Editieren einer Konfigurationsdatei wie folgt:
+
+
+ \vspace{-0.75mm}
+ \lstset{deletekeywords={open}}
+\begin{lstlisting}
+$ open ~/.zshrc
+\end{lstlisting}
+\vspace{-0.75mm}
+\lstset{morekeywords={open}}
+\lstset{mathescape=false}
+
+
+Dadurch öffnet sich ein Editorfenster mit dem Inhalt der Datei. Es empfiehlt sich, dort
+verschiedene Versionswechselbefehle zu definieren, um komfortabel zwischen den
+Java-Versionen umschalten zu können. Für die drei Teile des Buchs sind
+Java  17 LTS, Java 21 LTS und Java 25 LTS relevant.
+
+
+\vfill
+\pagebreak
+Zum Umschalten zwischen diesen fügen Sie bitte  am Ende der Konfigurationsdatei folgende Zeilen ein:
+
+
+\vspace{-0.5mm}
+\begin{lstlisting}
+setJdk17()
+{
+   export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-17.jdk/Contents/Home
+   export PATH=$JAVA_HOME/bin:$PATH
+}
+
+
+setJdk21()
+{
+   export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-21.jdk/Contents/Home
+   export PATH=$JAVA_HOME/bin:$PATH
+}
+
+
+setJdk25()
+{
+   export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk-25.jdk/Contents/Home
+   export PATH=$JAVA_HOME/bin:$PATH
+}
+\end{lstlisting}
+\vspace{-0.5mm}
+\lstset{mathescape=false}
+
+
+Aktivieren Sie Java 25 LTS dann wie folgt:
+
+
+ \vspace{-0.75mm}
+\begin{lstlisting}
+$ setJdk25
+\end{lstlisting}
+\vspace{-0.75mm}
+\lstset{mathescape=false}
+
+
+Zum Zurückschalten auf beispielsweise Java 21 LTS nutzen Sie:
+
+
+ \vspace{-0.75mm}
+\begin{lstlisting}
+$ setJdk21
+\end{lstlisting}
+\vspace{-0.75mm}
+\lstset{mathescape=false}
+
+
+
+
+\begin{praxistipp}{SDKMAN}
+\noindent
+\begin{center}
+\begin{minipage}{\textwidth-0.6cm}
+Zur Verwaltung (insbesondere Installieren und Umschalten) von verschiedenen Java-Versionen
+sowie anderen Programmiersprachen und Tools gibt es das Kommandozeilentool SDKMAN.
+Es bietet eine bequeme Möglichkeit, zwischen unterschiedlichen installierten Programmen zu wechseln.
+Weitere Informationen finden Sie unter \url{https://sdkman.io/usage/}.
+\end{minipage}
+\end{center}
+\end{praxistipp}
+
+
+
+
+% ######################################################################
+% ######################################################################
+\subsection{Java-Installation prüfen}
+
+
+Nach dem Ausführen der obigen Schritte sollte Java 25 LTS auf Ihrem Rechner
+installiert und von der Konsole startbar sein und Sie damit bereit für die nächsten Schritte.
+
+
+Öffnen Sie eine Konsole und geben Sie das Kommando \code{java -}\code{-version} ein:
+
+
+\begin{lstlisting}
+$ java --version
+java 25 2025-09-16 LTS
+Java(TM) SE Runtime Environment (build 25+37-LTS-3491)
+Java HotSpot(TM) 64-Bit Server VM (build 25+37-LTS-3491, mixed mode, sharing)
+\end{lstlisting}
+
+
+Wenn die Ausgabe ähnlich zu dieser erfolgt, dann haben Sie Java erfolgreich installiert.
+
+
+Im folgenden Text nutze ich immer \code{\$} zur Kennzeichnung von Eingaben auf der Konsole, also
+dem Terminal bei macOS bzw. der Windows-Eingabeaufforderung.
+
+
+
+
+% ######################################################################
+\subsubsection{JShell prüfen}
+
+
+Prüfen Sie der Vollständigkeit halber bitte auch noch den Aufruf sowie das Beenden des
+Tools JShell, das wir für im Anschluss immer wieder für das Nachvollziehen kleiner Beispiele
+sinnvoll nutzen werden:
+
+
+\begin{lstlisting}
+$ jshell
+|  Willkommen bei JShell - Version 25
+|  Geben Sie für eine Einführung Folgendes ein: /help intro
+
+
+jshell> /exit
+|  Auf Wiedersehen
+\end{lstlisting}
+
+
+
+
+
+
+% #####################################################
+% #####################################################
+% #####################################################
+\section{Konfigurationen für Build-Tools und IDEs für Java 25 LTS}
+\label{sec:Konfigurationen für Build-Tools und IDEs für Java 25 LTS}
+\index{Build-Tools und IDEs!Konfigurationen für Java 25 LTS}\index{Java 25!Konfigurationen für Build-Tools und IDEs}
+
+
+Build-Tools erleichtern das Kompilieren und Bündeln von Java-Klassen zu JARs. Was an Einstellungen für
+Java 25 LTS zu beachten ist, beschreibe ich kurz  für die beiden wesentlichen Vertreter Gradle und Maven.
+Zudem gehe ich auf Besonderheiten in der Konfiguration von IntelliJ und Eclipse ein.
+
+
+
+
+% #####################################################
+% #####################################################
+\subsection{Java 25 LTS mit Gradle}\index{Gradle!Java 25}\index{Java 25!mit Gradle}
+
+
+Zum Experimentieren mit Java 25 LTS empfiehlt sich Gradle in Version 9.1 (oder neuer).
+Zudem ist es zwingend erforderlich, die Konfiguration der Java-Version nicht mehr
+wie früher üblich über
+
+
+\lstset{mathescape=true}
+\lstset{deletekeywords={for, class}}
+\vspace{-0.5mm}
+\begin{lstlisting}
+$\mbox{\bfseries // ACHTUNG: das ist nicht mehr korrekt! }$
+$\mbox{\bfseries sourceCompatibility=25}$
+$\mbox{\bfseries targetCompatibility=25}$
+\end{lstlisting}
+\vspace{-0.5mm}
+\lstset{mathescape=false}
+\lstset{morekeywords={for, class}}
+
+
+zu spezifizieren, sondern wie im folgenden Listing gezeigt per Toolchain. Dazu sind ein paar, nachfolgend fett
+markierte Angaben in der Datei \code{build.gradle} vorzunehmen:
+
+
+\lstset{mathescape=true}
+\vspace{-0.5mm}
+\begin{lstlisting}
+plugins {
+	id 'java'
+}
+
+
+java {
+	$\mbox{\bfseries toolchain}$ {
+		$\mbox{\bfseries languageVersion = JavaLanguageVersion.of(25)}$
+	}
+}
+
+
+// $\mbox{\bfseries Aktivierung von Preview-Features und Incubator-Modul}$
+tasks.withType(JavaCompile).configureEach {
+    options.compilerArgs += ["$\mbox{\bfseries -}$$\mbox{\bfseries --enable-preview}$",
+                             "--add-modules", "jdk.incubator.vector"]
+}
+\end{lstlisting}
+\vspace{-0.5mm}
+\lstset{mathescape=false}
+
+
+\vfill
+\pagebreak
+\noindent
+Danach können wir wie gewohnt mit
+
+
+\vspace{-0.5mm}
+\begin{lstlisting}
+$ gradle clean assemble
+\end{lstlisting}
+\vspace{-0.5mm}
+
+
+ein korrespondierendes JAR bauen.
+
+
+Zum Experimentieren starten Sie z.\,B. die Klasse
+\code{Java25"-Runtime"-Version"-Example} aus dem Package \code{api}
+aus dem gerade erstellten JAR folgendermaßen:
+
+
+\begin{lstlisting}
+$ java --enable-preview -cp ./build/libs/Java25Examples.jar \
+       api.Java25RuntimeVersionExample
+\end{lstlisting}
+
+
+Wenn das Projekt wie oben mit Preview-Features kompiliert wurde, ist  es wichtig, den
+JVM-Kommandozeilenparameter \code{-}\code{-enable-preview} auch beim Start anzu\-geben.
+ Dann kommt es nach dem obigen erfolgreichen Gradle-Build zu folgenden Ausgaben:
+
+
+\lstset{deletekeywords={for, this}}
+\begin{lstlisting}
+Runtime required for this: 25
+latest: RELEASE_25
+valueOf: RELEASE_25
+25
+RELEASE_25
+%\end{lstlisting}
+\lstset{morekeywords={for, this}}
+
+Falls noch nicht die korrekte Java-Version verwendet wird, denken Sie vor den Aktionen daran
+die Java-Version im Pfad auf Java 25 LTS umzustellen, etwa durch Aufruf des
+zuvor in Abschnitt \ref{subsec:Installationsnacharbeiten}
+besprochenen Kommandos \code{setJdk25}.
+
+
+
+
+% #####################################################
+\subsection{Java 25 LTS mit Maven}\index{Maven!Java 23}\index{Java 23!mit Maven}
+
+
+Bereits mit dem im Mai 2025 aktuellen Maven 3.9.9 und auch dem im September 2025 aktuellen
+ Maven 3.9.11  in Kombination mit dem Maven-Compiler-Plugin
+in der Version 3.13 (oder neuer) lassen sich Java-25-Projekte ohne Probleme übersetzen.
+Insgesamt setzt sich die rühmliche Tradition von Maven fort, schneller und
+einfacher als Gradle neuere Java-Versionen zu unterstützen.
+
+
+Um Java 25 LTS mit Maven zu nutzen und Preview-Features sowie das Incubator-Modul für
+das Vector API zu aktivieren bzw. einzubinden, muss man folgende fett markierte Angaben in der Datei
+\code{pom.xml} in der Sektion \code{plugins} vornehmen:
+
+
+\lstset{mathescape=true}
+\begin{lstlisting}
+<plugins>
+	<plugin>
+		<artifactId>maven-compiler-plugin</artifactId>
+		<version>3.13.0</version>
+		<configuration>
+			$\mbox{\bfseries <release>25</release>}$
+			$\mbox{\bfseries <!-}$$\mbox{\bfseries- Aktivierung von Preview-Features -}$$\mbox{\bfseries ->}$
+			$\mbox{\bfseries <compilerArgs>}$
+                <arg>$\mbox{\bfseries -enable-preview}$</arg>
+                <arg>--add-modules</arg>
+                <arg>jdk.incubator.vector</arg>
+            </compilerArgs>
+		</configuration>
+	</plugin>
+</plugins>
+\end{lstlisting}
+\lstset{mathescape=false}
+
+
+\noindent
+Mit diesen Modifikationen lässt sich ein Maven-Build mit
+
+
+\lstset{deletekeywords={package}}
+\begin{lstlisting}
+$ mvn clean package
+\end{lstlisting}
+\lstset{morekeywords={package}}
+
+
+ausführen und es wird ein korrespondierendes JAR  -- wie von Maven gewohnt -- im
+Ordner \code{target} erzeugt.
+
+
+Betrachten wir als Beispiel erneut den Start der Klasse \code{Java25Runtime"-Version"-Example} aus dem Package
+\code{api} -- nach dem obigen erfolgreichen Maven-Build kommt es zu den Ausgaben wie für Gradle gezeigt.
+
+
+\lstset{deletekeywords={for, this}}
+\begin{lstlisting}
+$ java --enable-preview -cp target/Java25Examples-1.0.jar \
+       api.Java25RuntimeVersionExample
+\end{lstlisting}
+\lstset{morekeywords={for, this}}
+
+
+Das Gleiche wie für Gradle gilt auch für den Maven-Build:
+Wenn das Projekt mit Preview-Features, wie in unserer obigen Build-Datei spezifiziert,
+kompiliert wurde, ist  es wichtig -- und wie im obigen Aufruf geschehen --,
+beim Start eines Programms aus der JAR-Datei
+den JVM-Kommandozeilenparameter \code{-}\code{-enable-preview} anzugeben.
+
+
+
+
+
+
+
+
+% #####################################################
+\subsection{Java 25 LTS mit IntelliJ}\index{IntelliJ!Java 25}\index{Java 25!mit IntelliJ}
+
+
+Um mit Java 25 LTS zu experimentieren, nutzen Sie bitte das im Sommer 2025 erschienene
+IntelliJ IDEA 2025.2 oder aktueller.
+Allerdings sind noch ein paar Einstellungen vorzunehmen und folgende Dinge zu beachten:
+
+
+\begin{itemize}
+\item Im Dialog \frqq Project Structure\flqq{}
+			muss man im Bereich  \frqq \code{Project SDK}\flqq{}
+			den Wert 25 auswählen und zum Experimentieren mit  Preview-Features im Bereich
+			\frqq \code{Language level}\flqq{}  den Wert
+			\frqq \code{25 (Preview) - Primitive Types in Patterns etc.}\flqq{} einstellen.
+
+
+% 1628?×?768
+\begin{figure}[htb]
+\centering
+\includegraphics[bb=0 0 1172.16 552.96,width=\textwidth-1mm]{Abbildungen/Java25/Java25-ProjectStructure.png}
+\captionAndLabel{Einstellungen im Dialog Project Structure für Java 25 LTS}{fig:ProjectStructureJava25SettingsNormal}
+\end{figure}
+
+
+\vfill
+\pagebreak
+\item  Durch die Nutzung von Preview-Features innerhalb des Projekts ist es für das Ausführen der Beispiele
+		 erforderlich, in der jeweiligen Run Configuration der
+		zu startenden Klassen die VM-Option \code{-}\code{-enable-preview} anzugeben. Sofern man wie zuvor im
+		Language level bereits Preview-Features ausgewählt hat, ist dieser Schritt optional.
+
+
+% 1864?×?1210
+\begin{figure}[htb]
+\centering
+\includegraphics[bb=0 0 1342.08 871.2,width=\textwidth-1mm]{Abbildungen/Java25/IntelliJ-Run-Debug-Configurations.png}
+\captionAndLabel{Einstellungen in Run/Debug-Configurations}{fig:IntelliJ-Run-Debug-Configurations}
+\end{figure}
+
+
+
+\end{itemize}
+\vspace{-2mm}
+
+
+
+
+
+
+
+
+\vfill
+\pagebreak
+% #####################################################
+% #####################################################
+\subsection{Java 25 LTS mit Eclipse}\index{Eclipse!Java 25}\index{Java 25!mit Eclipse}
+\label{subsec:Java 25 LTS mit Eclipse}
+
+
+Ab Version 2025-09 wird Java 25 LTS durch Eclipse unterstützt, sofern wie nachfolgend
+beschrieben das passende Plugin installiert wurde.
+
+
+
+
+% #####################################################
+\subsubsection{Java-25-Plugin}
+
+
+In Eclipse  in der Version 2025-09 ist der Support für Java 25 LTS bereits vorbereitet und steht
+durch die kurze Zeitspanne zwischen der Veröffentlichung von Java 25 LTS und Eclipse 2025-09
+zunächst  als Plugin im  Eclipse Marketplace zum Nachinstallieren bereit,
+wie es in Abbildung \ref{fig:EclipseMarketplaceJava25Plugin} angedeutet ist.
+
+
+%1408?×?1080
+\begin{figure}[htb]
+\centering
+\includegraphics[bb=0 0 1013.76 777.6,width=\textwidth-1mm]{Abbildungen/Java25/Eclipse-Java-25-Plugin.png}
+\captionAndLabel{Installation des Java-25-Plugins aus dem Eclipse Marketplace}{fig:EclipseMarketplaceJava25Plugin}
+\end{figure}
+
+
+\vfill
+\pagebreak
+% #####################################################
+\subsubsection{Compiler-Einstellungen}
+Selbstverständlich müssen Sie den Compiler auf Java 25 LTS
+einstellen und die Preview-Features aktivieren, um alle Beispiele ausprobieren zu können.
+
+
+% 1402?×?1126
+\begin{figure}[htb]
+\centering
+\includegraphics[bb=0 0 1009.44 810.72,width=\textwidth-1mm]{Abbildungen/Java25/Eclipse-Java-25-Compiler-Settings.png}
+\captionAndLabel{Compiler-Einstellungen in Eclipse für Java 25 LTS}{fig:Java25CompilerSettings}
+\end{figure}
+\clearpage
+
+
+\vfill
+\pagebreak
+\subsubsection{Run Configuration}
+
+
+ Für das Ausführen der Beispiele, die Preview-Features nutzen, ist es
+ erforderlich, in der Run Configuration der
+zu startenden Klasse \code{-}\code{-enable-preview}  anzugeben. Das ist für
+die Klasse \code{FirstVectorExample} inklusive Aktivierung des zugehörigen Incubator-Moduls
+\code{-}\code{-add-modules jdk.incubator.vector} in Abbildung \ref{fig:Eclipse-Java23-Run-Debug-Configurations}
+gezeigt.
+
+% 1226?×?1002
+\begin{figure}[htb]
+\centering
+\includegraphics[bb=0 0 882.72 721.44,width=\textwidth-1mm]{Abbildungen/Java23/Eclipse-Java23-Run-Debug-Configurations.png}
+\captionAndLabel{Einstellungen in Run/Debug-Configurations}{fig:Eclipse-Java23-Run-Debug-Configurations}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+\clearpage
+\vfill
+\pagebreak
+% #########################################################
+% #########################################################
+\section{Ausprobieren der Beispiele und Lösungen}\index{Beispiele ausprobieren}
+
+
+Vielfach lassen sich die abgebildeten Sourcecode-Schnipsel in eine Klasse
+mit einer \code{main()}-Methode integrieren  und danach  ausführen.
+ Alter\-nativ bieten sich verschiedene Formen der Ausführung auf der Kommandozeile an.
+Dazu erfahren Sie gleich mehr.
+Ergänzend finden Sie alle relevanten Programme online auf
+\url{https://github.com/Michaeli71/Modern-Java-25-LTS}
+als Begleitprojekt zu diesem
+Buch. IntelliJ erlaubt den Import als Gradle- oder Maven-Projekt.
+
+
+Grundsätzlich verwende ich möglichst nachvollziehbare Konstrukte und verzichte
+auf besonders ausgefallene Syntax- oder API-Features. Sofern nicht explizit im Text erwähnt, sollten
+Sie die Beispiele und Lösungen daher mit der aktuellen LTS-Version Java 25 ausprobieren können.
+Ab und an setze ich Preview-Features aus Java 25 LTS  ein.
+Wie zuvor gezeigt, erfordert dies in den IDEs und Build-Tools gewisse Parametrierungen
+sowohl beim Kompilieren als auch beim Ausführen.
+
+
+
+
+
+
+% #####################################################
+\subsection{Ausprobieren neuer Java-Features mit der JShell oder der Kommandozeile}
+\label{subsec:Ausprobieren neuer Java-Features mit der JShell oder der Kommandozeile}
+
+
+Durch die recht eng getakteten Releasezyklen von 6 Monaten ist  die Tool-Landschaft mitunter noch nicht
+immer parat, wenn man schon mal mit Vorabversionen experimentieren möchte. Dann bieten sich
+folgende Alternativen an:
+
+
+\begin{enumerate}
+\item JShell -- Die JShell ist  ein REPL-Kommandozeilen-Tool (Read-Eval-Print-Loop)\index{REPL}\index{Read-Eval-Print-Loop}
+          und seit Java 9 	Bestandteil des JDKs. Damit lassen sich kleine  Sourcecode-Schnipseln schnell und einfach
+          ausführen, was beim Entdecken und Ausprobieren von Neuerungen hilfreich ist.
+           Eine kurze Einführung liefert  Abschnitt \ref{sec:Java + REPL}.
+
+\item Kommandozeile -- Seit Java 11 LTS gibt es ein Feature namens Direct Compilation, mit dem sich
+		einzelne Java-Dateien direkt durch Aufruf von \code{java},
+		also ohne explizites vorheriges Kompilieren, starten lassen
+		 (vgl. Abschnitt \ref{sec:Launch Single-File Source-Code Programs}).
+		 		 Mit Java 22 und JEP 458 (vgl. Abschnitt \ref{sec:JEP 458: Launch Multi-File Source-Code
+Programs}) wurde die Restriktion aufgehoben und es lassen sich nun mehrere Klassen direkt kompilieren.
+
+\item Kommandozeile  -- Selbstverständlich ist es  immer noch möglich, mit \code{javac} und \code{java} zu arbeiten,
+         wenn auch manchmal etwas mühsam -- deswegen gehe ich hier nicht näher darauf ein.
+\end{enumerate}
+
+
+Vielfach können Sie die abgebildeten Sourcecode-Schnipsel einfach in der JShell oder mithilfe
+eines Texteditors bzw. besser noch in einer IDE eingeben. Je nach Situation empfiehlt
+sich die eine oder andere Art mehr. Betrachten wir das nun genauer.
+
+
+
+
+
+
+% ###############################################################
+\subsubsection{Ausführen mit der \texttt{jshell}}
+
+
+Mit der JShell wird es möglich, etwas Java-Sourcecode zu schreiben und Dinge schnell auszuprobieren,
+ohne dafür die IDE starten und ein Projekt anlegen zu müssen.
+Außerdem kann man in der JShell die neuesten Features nutzen.
+
+
+Hier folgen ein paar einführende Beispiele, um Ihnen das Ausführen einzelner oder weniger
+Kommandos zu verdeutlichen.
+Etwas detaillierter gehe ich in Abschnitt \ref{sec:Java + REPL} auf die Möglichkeiten ein.
+
+
+Starten wir die \code{jshell} und probieren einige Aktionen und Berechnungen aus.
+Dabei dient eine Abwandlung eines Hello-World-Beispiels als Startpunkt:
+
+
+\vspace{-0.75mm}
+\begin{lstlisting}
+$ jshell
+|  Willkommen bei JShell - Version 25
+|  Geben Sie für eine Einführung Folgendes ein: /help intro
+
+
+jshell> System.out.println("Hello JShell")
+Hello JShell
+\end{lstlisting}
+\vspace{-0.75mm}
+
+
+
+
+% #######################################################################
+\begin{praxistipp}{Besonderheit Preview-Features in der JShell nutzen}
+\begin{center}
+\begin{minipage}{\textwidth-0.6cm}
+Analog zum Vorgehen beim Kompilieren muss die Möglichkeit, Preview-Featues zu nutzen,
+über folgenden Angabe beim Start aktiviert werden:\index{JShell}
+
+
+\vspace{-0.75mm}
+\begin{lstlisting}
+$ jshell --enable-preview
+\end{lstlisting}
+\vspace{-3mm}
+\end{minipage}
+\end{center}
+\end{praxistipp}
+
+
+\noindent
+Sie können  beliebige Java-Anweisungen in der JShell eintippen.
+Das ist normalerweise dadurch angedeutet, dass die einzugebenden Zeilen
+mit \code{jshell>} und die nachfolgenden Zeilen bis zum Abschluss der Eingabe mit \code{...>} markiert sind:
+
+
+\lstset{deletekeywords={int, return, void, open, new, import, class, private, true, this, public, final}}
+\vspace{-0.75mm}
+\begin{lstlisting}
+jshell> int multiply(int a, int b) {
+   ...>     return a * b;
+   ...> }
+|  created method multiply(int,int)
+
+
+jshell> multiply(7, 2)
+$3 ==> 14
+\end{lstlisting}
+\vspace{-0.75mm}
+\lstset{morekeywords={int, return, void, open, new, import, class, private, true, this, public, final}}
+
+
+Aufgrund der Neuerung Module Import Declarations und den Compact Source Files inklusive dem
+automatischen Einbinden des Moduls \code{java.base} sind bereits diverse Funktionalitäten, wie
+File-IO, Stream-API, Date and Time API usw. direkt ohne Import zugänglich.
+
+
+Weitere spezielle Java-Funktionalitäten lassen sich wie gewohnt per \code{import} einbinden, hier
+für die HTTP-Verarbeitung gezeigt:
+
+
+\lstset{deletekeywords={int, return, void, open, new, class, private, true, this, public, final}}
+\vspace{-0.75mm}
+\begin{lstlisting}
+jshell> import java.net.http.*
+
+
+jshell> var request = HttpRequest.newBuilder()
+   ...>                          .uri(new URI("https://postman-echo.com/get"))
+   ...>                          .GET()
+   ...>                          .build();
+request ==> https://postman-echo.com/get GET
+
+
+jshell> var httpClient = HttpClient.newHttpClient();
+httpClient ==> jdk.internal.net.http.HttpClientImpl@78c03f1f(1)
+
+
+jshell> var response = httpClient.send(request,
+   ...>                                HttpResponse.BodyHandlers.ofString());
+response ==> (GET https://postman-echo.com/get) 200
+\end{lstlisting}
+\vspace{-0.75mm}
+\lstset{morekeywords={int, return, void, open, new, class, private, true, this, public, final}}
+
+
+Dieses Vorgehen praktiziere ich bis maximal ca. 10 bis 20 Zeilen. Danach empfiehlt es sich,
+die Zeilen mithilfe eines Texteditors einzugeben und mit der im Anschluss beschriebenen Direct Compilation auszuführen.
+Noch komfortabler geht das Ganze  mithilfe einer IDE.
+
+
+Manchmal möchte ich konzeptionell etwas verdeut\-lichen und
+verzichte dann auf die zuvor gezeigte exakte Darstellung in der JShell, weil
+die Anweisungen durch den Mix von Protokollierung mit  \code{jshell>} sowie \code{...>} und den
+Zwischen\-ergebnissen unübersichtlich würden. In den Fällen greife ich auf folgende verkürzte Darstellung zurück:
+
+
+\vspace{-0.75mm}
+\begin{lstlisting}
+int minutesPerHour = 60;
+int daysPerYear = 365;
+
+
+var result = Stream.of("Maria", "Mike", "Jim", "Micha").
+    filter(str -> str.length() > 4).
+    toList();
+IO.println("filtered content: " + result);
+\end{lstlisting}
+\vspace{-0.75mm}
+
+
+Derartige Anweisungen können nacheinander in die JShell eingegeben oder aber in einer
+Java-Datei in eine \code{main()}-Methode eingebettet werden, etwa wie folgt
+mit den Neuerungen aus Java 25 LTS -- dies wird auch im Anschluss nochmals aufgegriffen.
+
+
+\vspace{-0.75mm}
+\begin{lstlisting}
+void main()
+{
+    int minutesPerHour = 60;
+    int daysPerYear = 365;
+
+
+    var result = Stream.of("Maria", "Mike", "Jim", "Micha").
+           filter(str -> str.length() > 4).
+           toList();
+    IO.println("filtered content: " + result);
+}
+\end{lstlisting}
+\vspace{-0.75mm}
+
+
+% ###############################################################
+\subsubsection{Ausführen mit der Kommandozeile -- Direct Compilation}
+
+
+Werden die Programme länger, so wird das Editieren mit der JShell mühsam.
+Hier kann ein Texteditor Abhilfe schaffen. Programme sind dann ohne  \code{jshell>}
+abgebildet.
+Als Beispiel dient ein einfaches aus einer Klasse bestehendes Programm,
+das  lediglich prüft, ob zwei gegebene Zeitdauern von 20 und -12 Tagen negativ sind:
+
+
+\vspace{-0.75mm}
+\begin{lstlisting}
+package intro;
+
+
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+
+
+public class DurationIntroExample
+{
+    public static void main(final String[] args)
+    {
+        System.out.println(Duration.of(20L, ChronoUnit.DAYS).isNegative());
+        System.out.println(Duration.of(-12L, ChronoUnit.DAYS).isNegative());
+    }
+}
+\end{lstlisting}
+\vspace{-0.75mm}
+
+
+Diese Zeilen müssen dann so eingegeben und als Datei mit dem exakt gleichen
+Namen wie die Klasse inklusive der Endung \code{.java}, hier also
+\code{DurationIntroExample.java},
+abgespeichert werden.
+
+
+Werfen wir einen kurzen Blick auf die angenehmen Neuerungen aus Java 25 LTS
+und wie sich das obige Beispiel dadurch elegant, kurz und knackig schreiben lässt:
+
+
+\vspace{-0.75mm}
+\begin{lstlisting}
+void main()
+{
+   IO.println(Duration.of(20L, ChronoUnit.DAYS).isNegative());
+   IO.println(Duration.of(-12L, ChronoUnit.DAYS).isNegative());
+}
+\end{lstlisting}
+\vspace{-0.75mm}
+
+
+Interessanterweise benötigt es hier keine expliziten Imports mehr, da
+die verwendeten Funktionalitäten aus dem Modul \code{java.base} stammen.
+Dieses wird für diese kompakte Schreibweise automatisch importiert.
+Details zu der Neuerung Module Imports Declarations finden
+Sine in Abschnitt \ref{sec:JEP 511: Module Import Declarations}.
+
+
+Nochmals zur kompakten Schreibweise. Diese nennt sich
+Compact Source Files and Instance Main Methods
+ (vgl. Abschnitt \ref{sec:JEP 512: Compact Source Files and Instance Main Methods}).
+In dem Kontext wurde auch die Klasse \code{java.lang.IO} eingeführt, die Interaktionen
+mit der Konsole leichter als früher gestaltet.
+
+
+Wie bereits erwähnt, kann man (einzelne) Java-Dateien durch Aufruf von \code{java},
+ohne explizites vorheriges Kompilieren, von der Konsole starten, nachfolgend unter
+der Annahme einer Speicherung in einem Ordner \code{src/main/java/intro/}:
+
+
+\vspace{-0.75mm}
+\begin{lstlisting}
+$ java src/main/java/intro/DurationIntroExample.java
+\end{lstlisting}
+\vspace{-0.75mm}
+
+
+\noindent
+Dann erhalten wir diese Ausgabe:
+
+
+\lstset{deletekeywords={true, false}}
+\vspace{-0.5mm}
+\begin{lstlisting}
+false
+true
+\end{lstlisting}
+\vspace{-0.5mm}
+\lstset{morekeywords={true, false}}
+
+
+
+
+
+
+
+
+% #######################################################################
+\begin{praxistipp}{Besonderheit Preview-Features}
+\begin{center}
+\begin{minipage}{\textwidth-0.6cm}
+Bei der Direct Compilation ist für Preview-Features neben
+ \code{-}\code{-enable-preview}  die Angabe einer
+Source-Version mit  \code{-}\code{-source} wie folgt erforderlich --
+seit Java 23 kann man darauf sogar verzichten.
+
+
+\vspace{-0.75mm}
+\begin{lstlisting}
+$ java --enable-preview --source 21 <YOUR_CLASS_NAME>.java
+\end{lstlisting}
+\vspace{-3mm}
+\end{minipage}
+\end{center}
+\end{praxistipp}
+\vspace{-0.75mm}
+
+
+
+
+
+
+
+
+%\vfill
+%\pagebreak
+% #####################################################
+% #####################################################
+\subsection{Ausprobieren neuer Java-Features in einer Sandbox}\index{Sandbox}
+
+
+Durch die häufigen Releasewechsel und die ständig neu zu installierenden Versionen ist man
+mitunter noch nicht auf dem aktuellen Stand oder vielleicht möchte man schon einmal ein
+Feature ausprobieren, bevor das offizielle Release erschienen ist. Genau dafür
+bietet die Seite \url{https://javaalmanac.io/} eine sogenannte Sandbox. Dort können Sie
+in einem Editorfenster bereits die neuen (bis zu dem Zeitpunkt bereitgestellten) Features
+ausprobieren, indem Sie kleine Programme in Form einer Klasse oder wie hier bereits als implizit deklarierte Klasse
+(vgl. Abschnitt \ref{sec:JEP 512: Compact Source Files and Instance Main Methods}) und mit einer
+simplen \code{main()}-Methode erstellen und dann dort ausführen, wie es Abbildung \ref{fig:Java25-Sandbox} zeigt.
+Zum Experimentieren können Sie die gezeigten Zeilen als Anregung nutzen.
+
+
+% 1614?×?432, => *.72
+\begin{figure}[htb]
+\centering
+\includegraphics[bb=0 0 1162.08 311.04,width=\textwidth-1mm]{Abbildungen/Java25/Java25-Sandbox.png}
+\caption{Sandbox zum Ausprobieren von neuen Funktionalitäten}\label{fig:Java25-Sandbox}
+\end{figure}
+
+
+
+
+
+
+
+
+
+
+% #########################################################
+\section*{Entdeckungsreise zu modernem Java -- Wünsche an die Leserinnen und Leser}
+
+
+Genug der Vorrede: Ich wünsche Ihnen nun viel Freude mit diesem Buch sowie einige neue
+Erkenntnisse und viel Spaß beim Experimentieren mit Java 21 LTS und
+ dem brandaktuellen Java 25 LTS.
+Möge Ihnen der Umstieg auf die neue(n) Java-Version(en)  oder die Migration
+bestehender Anwendungen  durch die Lektüre meines Buchs  leichter fallen.
+
+
+Wenn Sie zunächst eine Auffrischung Ihres Wissens zu wesentlichen
+Neuerungen aus Java 8 LTS bis 11 LTS benötigen, bietet sich ein Blick in den Anhang
+\ref{cha:Wesentliches aus Java 8 LTS, 9, 10 und 11 LTS} an.
+
+
+Teil I führt Sie kompakt in die Neuerungen aus Java 12 bis 17 LTS ein.
+Danach beschreibt Teil II ausführlich die Erweiterungen aus Java 18 bis 21 LTS.
+Im abschließenden Teil III werden die Neuerungen in Java 22 bis 25 LTS  im Detail behandelt.
+
+
+
+
+
+

@@ -1,0 +1,74 @@
+plugins {
+    id 'java'
+}
+
+repositories
+{
+	mavenCentral();
+}
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(25)
+	}
+}
+
+tasks.withType(JavaCompile).configureEach {
+	// disable incremental compilation
+    options.incremental = false
+    options.compilerArgs += ["--enable-preview", "--add-modules", "jdk.incubator.vector"]
+}
+
+dependencies
+{
+	// JUnit 4 Support
+	testImplementation "junit:junit:4.13.2"
+	testRuntimeOnly "org.junit.vintage:junit-vintage-engine:5.11.4"
+  	
+  	// JUnit 5
+  	testImplementation "org.junit.jupiter:junit-jupiter-api:5.11.4"
+	testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.11.4"
+		
+	// Asssert J
+	testImplementation "org.assertj:assertj-core:3.23.1"
+	
+	// Parameterized tests
+	testImplementation "org.junit.jupiter:junit-jupiter-params:5.11.4"
+	
+	// Migration Support to Enable Rules in JUnit 5
+	testImplementation "org.junit.jupiter:junit-jupiter-migrationsupport:5.11.4"
+
+	// https://mvnrepository.com/artifact/tools.jackson.core/jackson-databind
+	implementation("tools.jackson.core:jackson-databind:3.0.3")
+	implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.20.1"
+
+
+	implementation "org.projectlombok:lombok:1.18.28"
+}
+
+// JUnit 5 aktivieren
+test {
+    useJUnitPlatform()
+
+    // für die Beispiele wollen wir Fehler nicht als Build-Fehler werten, da die Beispiel
+    // bewusst ein paar Fehler integriert haben
+    ignoreFailures = true
+
+    // $\mbox{\bfseries Anzeige der Testresultate auf der Konsole }$
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
+
+tasks.named('test') {
+    jvmArgs += ['--enable-preview', '--add-modules', 'jdk.incubator.vector']
+}
+
+tasks.withType(Test) {
+
+    // $\mbox{\bfseries Testergebnisse im Browser öffnen}$
+    doLast {
+        File file = file("$buildDir/reports/tests/test/index.html")
+        java.awt.Desktop.desktop.browse file.toURI()
+    }
+}

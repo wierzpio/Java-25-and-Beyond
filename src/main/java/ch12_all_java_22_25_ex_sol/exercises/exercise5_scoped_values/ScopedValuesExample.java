@@ -1,0 +1,47 @@
+package ch12_all_java_22_25_ex_sol.exercises.exercise5_scoped_values;
+
+import java.time.ZonedDateTime;
+import java.util.List;
+
+/**
+ * Beispielprogramm für die Workshops "Best of Java 11/17 bis 20/21/22/23/24/25" / die Bücher "Java – die Neuerungen in Java 17 LTS, 18 und 19" und "Java 25 LTS"
+ * Sample program for the workshops "Best of Java 11/17 to 20/21/22/23/24/25" / the books “Java – the new features in Java 17 LTS, 18, and 19” and “Java 25 LTS and Beyond”
+ *
+ * @author Michael Inden
+ * <p>
+ * Copyright 2021/2022/2023/2024/25/26 by Michael Inden
+ */
+public class ScopedValuesExample {
+
+    // TO BE USED
+    public static final ScopedValue<User> LOGGED_IN_USER = ScopedValue.newInstance();
+    public static final ScopedValue<ZonedDateTime> REQUEST_TIME = ScopedValue.newInstance();
+
+    public static final Controller controller = createController(new Service());
+
+    private static Controller createController(final Service service) {
+        return new Controller(service);
+    }
+
+    void main() {
+        // Simuliere Requests
+        for (String name : List.of("ATTACKER", "ADMIN")) {
+            var user = new User(name, name.toLowerCase());
+            controller.consumingMethod(user, ZonedDateTime.now());
+            // TODO: Umwandlung mit ScopedValue consumingMethod() ohne Parameter
+
+            // no time passed
+            controller.consumingMethod(user, null);
+            // TODO: Umwandlung mit ScopedValue consumingMethod() ohne Parameter
+
+            String answer = controller.process(user, ZonedDateTime.now());
+            // TODO: Umwandlung mit ScopedValue process() ohne Parameter
+            System.out.println(answer);
+
+            // no time passed
+            String answer2 = controller.process(user, null);
+            // TODO: Umwandlung mit ScopedValue process() ohne Parameter
+            System.out.println(answer2);
+        }
+    }
+}

@@ -1,0 +1,27 @@
+package ch02_java_12_17.ch02_06_strings;
+
+import java.util.List;
+
+/**
+ * Beispielprogramm für die Workshops "Best of Java 11/17 bis 20/21/22/23/24/25" / die Bücher "Java – die Neuerungen in Java 17 LTS, 18 und 19" und "Java 25 LTS"
+ * Sample program for the workshops "Best of Java 11/17 to 20/21/22/23/24/25" / the books “Java – the new features in Java 17 LTS, 18, and 19” and “Java 25 LTS and Beyond”
+ *
+ * @author Michael Inden
+ * <p>
+ * Copyright 2021/2022/2023/2024/25/26 by Michael Inden
+ */
+public class StringFormattedExample
+{
+    public static void main(final String[] args)
+    {
+        var name = "Jim";
+        int age = 47;
+        var hobbies = List.of("Java", "Movies", "Cycling");
+
+        var textWithPlaceholders = """
+                        Name: %s
+                        Alter: %d
+                        Hobbies: %s""".formatted(name, age, hobbies);
+        System.out.println(textWithPlaceholders);
+    }
+}
