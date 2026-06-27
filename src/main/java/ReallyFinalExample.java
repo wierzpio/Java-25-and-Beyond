@@ -25,7 +25,7 @@ private static void accessAndChangeValue(Class<?> clazz) throws NoSuchFieldExcep
 
     // Mutate the final field in the object
     field.set(obj, 666);
-    System.out.println(obj.fixedValue());  // Prints 666
+    System.out.println(obj.fixedValue());  // Prints 66
 }
 
     private static void accessAndChangeRecord(Class<?> clazz) throws NoSuchFieldException, IllegalAccessException {
